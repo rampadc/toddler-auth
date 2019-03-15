@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  auth-svc:
+    image: rampadc/auth-svc:latest
+    build:
+      context: .
+    volumes:
+      - svclogs:/var/log/services
+    environment:
+      - NODE_ENV=production
+      - TODDLER_USERNAME=Simp1eUs3rname
+      - TODDLER_PASSWORD=Passw0rd
+      - TODDLER_WORLD_ID=en41
+      - TODDLER_MQ=amqp://rabbit
+    networks:
+      - toddler-network
+    restart: on-failure
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  svclogs:
+
+networks:
+  toddler-network:
+    name: toddler-network

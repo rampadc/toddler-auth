@@ -5,10 +5,10 @@ import {Log} from "./common/Log";
 /*******************************************************************************************************************
  * Check for credentials from Docker Swarm secrets
  ******************************************************************************************************************/
-const username = Secrets.get('USERNAME') || process.env.USERNAME as string || '';
-const password = Secrets.get('PASSWORD') || process.env.PASSWORD as string || '';
-const worldId  = Secrets.get('WORLD_ID') || process.env.WORLD_ID as string || '';
-const mqUrl = process.env.MQ_URL || '';
+const username = Secrets.get('TODDLER_USERNAME') || process.env.TODDLER_USERNAME as string || '';
+const password = Secrets.get('TODDLER_PASSWORD') || process.env.TODDLER_PASSWORD as string || '';
+const worldId = Secrets.get('TODDLER_WORLD_ID') || process.env.TODDLER_WORLD_ID as string || '';
+const mqUrl = process.env.TODDLER_MQ || '';
 
 if (username.trim().length == 0 || password.trim().length == 0 || worldId.trim().length == 0) {
     Log.service('auth').error('Username, password or world id are not provided.');

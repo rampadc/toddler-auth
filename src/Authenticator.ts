@@ -300,7 +300,11 @@ export class Authenticator {
 
     private onSocketDisconnection() {
         this._socketPreviouslyDisconnected = true;
-        this.disconnectMQ();
+
+        // reconnect
+        setTimeout(() => {
+            this._socketClient.connect();
+        }, 3000);
     }
 
     private onSocketConnection() {
