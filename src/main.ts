@@ -1,6 +1,6 @@
 import {Authenticator} from "./Authenticator";
 import {Secrets} from "./Secrets";
-import {Log} from "../../common/Log";
+import {Log} from "./common/Log";
 
 /*******************************************************************************************************************
  * Check for credentials from Docker Swarm secrets

@@ -1,11 +1,11 @@
 import {SocketClient, SocketClientEvent} from "./SocketClient";
-import {ISocketMessage} from "../../common/ISocketMessage";
-import {MQEvent} from "../../common/MQEvent";
-import {Log} from "../../common/Log";
-import {MQRpcServer} from "../../common/MQRpcServer";
+import {ISocketMessage} from "./common/ISocketMessage";
+import {MQEvent} from "./common/MQEvent";
+import {Log} from "./common/Log";
+import {MQRpcServer} from "./common/MQRpcServer";
 import amqp from "amqplib";
-import {MQProducer} from "../../common/MQProducer";
-import {MQConsumer} from "../../common/MQConsumer";
+import {MQProducer} from "./common/MQProducer";
+import {MQConsumer} from "./common/MQConsumer";
 
 /**
  * Authenticator class authenticates user to game if not connected

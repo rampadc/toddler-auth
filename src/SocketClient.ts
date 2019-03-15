@@ -1,8 +1,8 @@
 import io from "socket.io-client";
 import {EventEmitter} from "events"
-import {ISocketMessage} from "../../common/ISocketMessage";
-import {IMessageReply} from "../../common/IMessageReply";
-import {Log} from "../../common/Log";
+import {ISocketMessage} from "./common/ISocketMessage";
+import {IMessageReply} from "./common/IMessageReply";
+import {Log} from "./common/Log";
 
 export enum SocketClientEvent {
     messageReceived = "message received",

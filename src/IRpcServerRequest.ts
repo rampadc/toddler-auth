@@ -1,4 +1,4 @@
-import {ISocketMessage} from "../../common/ISocketMessage";
+import {ISocketMessage} from "./common/ISocketMessage";
 import amqp from "amqplib";
 
 export interface IRpcServerRequest {
