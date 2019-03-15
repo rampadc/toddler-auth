@@ -1,0 +1,3 @@
+[submodule "src/common"]
+	path = src/common
+	url = https://rampadc@bitbucket.org/cn-d/common.git

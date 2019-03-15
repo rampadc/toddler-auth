@@ -1,0 +1,13 @@
+2018-12-01T13:04:52.612Z info: {"type":"System/welcome","data":{"message":"Connection established using transport websocket","transport":"websocket","host":"en0w3.twx.ig.local","maintenance":false}}
+2018-12-01T13:06:35.120Z info: {"type":"System/welcome","data":{"message":"Connection established using transport websocket","transport":"websocket","host":"en0w3.twx.ig.local","maintenance":false}}
+
+2018-12-01T13:04:50.277Z error: Socket client or game queues are not ready
+2018-12-01T13:04:51.184Z debug: MQ to-game queue asserted
+2018-12-01T13:04:51.192Z debug: MQ from-game exchange asserted
+2018-12-01T13:04:52.611Z info: Game socket connected
+2018-12-01T13:04:53.121Z info: Socket client and game messages queues are ready
+2018-12-01T13:06:32.805Z error: Socket client or game queues are not ready
+2018-12-01T13:06:33.714Z debug: MQ to-game queue asserted
+2018-12-01T13:06:33.721Z debug: MQ from-game exchange asserted
+2018-12-01T13:06:35.119Z info: Game socket connected
+2018-12-01T13:06:35.646Z info: Socket client and game messages queues are ready
