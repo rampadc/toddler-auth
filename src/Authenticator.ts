@@ -75,15 +75,15 @@ export class Authenticator {
 
     private _selectWorld() {
         if (!this._loggedIn) {
-            Log.service('auth').error('Player is not logged in to select world.');
+          Log.service().error('Player is not logged in to select world.');
             return;
         }
         if (this._worldId == '') {
-            Log.service('auth').error('World ID is not supplied.');
+          Log.service().error('World ID is not supplied.');
             return;
         }
 
-        Log.service('auth').debug(`Selecting world ${this._worldId} for player ID ${this._playerId}`);
+      Log.service().debug(`Selecting world ${this._worldId} for player ID ${this._playerId}`);
         this._socketClient.request({
             type: 'Authentication/selectCharacter',
             data: {
@@ -92,9 +92,9 @@ export class Authenticator {
             }
         }, replyMsg => {
             if (replyMsg.type.toLowerCase() != 'authentication/characterselected') {
-                Log.service('auth').error('World selection failed');
+              Log.service().error('World selection failed');
             } else {
-                Log.service('auth').info('World selection successful');
+              Log.service().info('World selection successful');
                 this._loginInProgress = false;
                 this._authenticated = true;
 
@@ -117,20 +117,20 @@ export class Authenticator {
      */
     private _login() {
         if (this._username == '' || this._password == '') {
-            Log.service('auth').error('Username/password is not supplied.');
+          Log.service().error('Username/password is not supplied.');
             return;
         }
 
         if (!this._socketClient.isConnected()) {
-            Log.service('auth').error('Socket client is not connected.');
+          Log.service().error('Socket client is not connected.');
             return;
         }
         if (this._loginInProgress) {
-            Log.service('auth').error('Player is logging in already.');
+          Log.service().error('Player is logging in already.');
             return;
         }
         if (this._authResting) {
-            Log.service('auth').debug(`Try login again in ${this._authRestPeriod} seconds`);
+          Log.service().debug(`Try login again in ${this._authRestPeriod} seconds`);
         }
 
         // do not allow further login/logout attempts for timeout period
@@ -146,9 +146,9 @@ export class Authenticator {
                 }
             }, replyMsg => {
                 if (replyMsg.type.toLowerCase() != 'logout/success') {
-                    Log.service('auth').error('Logout failed');
+                  Log.service().error('Logout failed');
                 } else {
-                    Log.service('auth').info('Logout successful');
+                  Log.service().info('Logout successful');
                     this._loginInProgress = false;
                     this._authenticated = false;
 
@@ -166,11 +166,11 @@ export class Authenticator {
                 }
             }, replyMsg => {
                 if (replyMsg.type.toLowerCase() != 'login/success') {
-                    Log.service('auth').error('Login failed');
+                  Log.service().error('Login failed');
                 } else {
-                    Log.service('auth').info('Login successful');
+                  Log.service().info('Login successful');
                     this._loggedIn = true;
-                    Log.service('auth').info('Selecting world...');
+                  Log.service().info('Selecting world...');
 
                     this._playerId = replyMsg.data['player_id'];
                     this._selectWorld();
@@ -262,7 +262,7 @@ export class Authenticator {
                 this._processOnceAuthenticated(socketMessage, mqMessage);
             }
         } else {
-            Log.service('auth').debug('socket client is not connected, RPC message ignored');
+          Log.service().debug('socket client is not connected, RPC message ignored');
         }
     }
 

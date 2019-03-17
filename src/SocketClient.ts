@@ -47,11 +47,11 @@ export class SocketClient extends EventEmitter {
         // sends a message to the client.
 
         this.socket.on('connect', () => {
-            Log.service('auth').info('Socket connected');
+          Log.service().info('Socket connected');
             this.emit(SocketClientEvent.connected);
         });
         this.socket.on("disconnect", () => {
-            Log.service('auth').info('Socket disconnected');
+          Log.service().info('Socket disconnected');
             this.emit(SocketClientEvent.disconnected);
         });
 
@@ -112,13 +112,13 @@ export class SocketClient extends EventEmitter {
             if (this._replyQueue[i].message.id == message.id) {
                 this._replyQueue[i].replyFn(message);
 
-                Log.service('auth').info(`Message ${this._replyQueue[i].message.id} sent back to requester`);
+              Log.service().info(`Message ${this._replyQueue[i].message.id} sent back to requester`);
                 this._replyQueue.splice(i, 1);
                 return;
             }
         }
 
-        Log.service('auth').info('Message to be sent to MQ producer');
+      Log.service().info('Message to be sent to MQ producer');
 
         // reached the end but cannot find a match for RPC
         this.emit(SocketClientEvent.messageReceived, message);

@@ -12,6 +12,7 @@ services:
       - TODDLER_PASSWORD=Passw0rd
       - TODDLER_WORLD_ID=en41
       - TODDLER_MQ=amqp://nraoryxx:C3ll4fkdqHiLPuuSYw9iOXctdoM5NCC5@vulture.rmq.cloudamqp.com/nraoryxx
+      - TODDLER_SVC_NAME=auth
     networks:
       - toddler-network
     restart: on-failure
