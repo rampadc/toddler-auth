@@ -29,11 +29,10 @@ RUN tsc --build
 FROM base AS release
 WORKDIR /opt/
 
-COPY package.json ./auth/package-*.json /opt/
+COPY package.json package-*.json /opt/
 RUN npm install --production
 
 # copy in distribution code
 COPY --from=build /opt/svc/auth/dist/ /opt/
-RUN ls -lt
 
 CMD ["node", "main.js"]

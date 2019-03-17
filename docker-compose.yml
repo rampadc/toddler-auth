@@ -11,7 +11,7 @@ services:
       - TODDLER_USERNAME=Simp1eUs3rname
       - TODDLER_PASSWORD=Passw0rd
       - TODDLER_WORLD_ID=en41
-      - TODDLER_MQ=amqp://rabbit
+      - TODDLER_MQ=amqp://nraoryxx:C3ll4fkdqHiLPuuSYw9iOXctdoM5NCC5@vulture.rmq.cloudamqp.com/nraoryxx
     networks:
       - toddler-network
     restart: on-failure
