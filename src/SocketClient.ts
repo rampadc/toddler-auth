@@ -1,8 +1,8 @@
 import io from "socket.io-client";
 import {EventEmitter} from "events"
-import {ISocketMessage} from "./common/ISocketMessage";
-import {IMessageReply} from "./common/IMessageReply";
-import {Log} from "./common/Log";
+import {ISocketMessage} from "./ISocketMessage";
+import {IMessageReply} from "./IMessageReply";
+import {Log} from "./Log";
 
 export enum SocketClientEvent {
     messageReceived = "message received",
@@ -112,13 +112,12 @@ export class SocketClient extends EventEmitter {
             if (this._replyQueue[i].message.id == message.id) {
                 this._replyQueue[i].replyFn(message);
 
-              Log.service().info(`Message ${this._replyQueue[i].message.id} sent back to requester`);
                 this._replyQueue.splice(i, 1);
                 return;
             }
         }
 
-      Log.service().info('Message to be sent to MQ producer');
+        Log.service().info('Message to be sent to authenticator');
 
         // reached the end but cannot find a match for RPC
         this.emit(SocketClientEvent.messageReceived, message);

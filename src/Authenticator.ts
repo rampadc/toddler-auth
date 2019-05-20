@@ -1,16 +1,12 @@
 import {SocketClient, SocketClientEvent} from "./SocketClient";
-import {ISocketMessage} from "./common/ISocketMessage";
-import {MQEvent} from "./common/MQEvent";
-import {Log} from "./common/Log";
-import {MQRpcServer} from "./common/MQRpcServer";
-import amqp from "amqplib";
-import {MQProducer} from "./common/MQProducer";
-import {MQConsumer} from "./common/MQConsumer";
-
+import {ISocketMessage} from "./ISocketMessage";
+import {Log} from "./Log";
+import EventEmitter from 'events';
+import {AuthenticatorEvent} from "./AuthenticatorEvent";
 /**
  * Authenticator class authenticates user to game if not connected
  */
-export class Authenticator {
+export class Authenticator extends EventEmitter {
     private static _instance: Authenticator;
 
     private _socketClient = SocketClient.shared;
@@ -27,15 +23,10 @@ export class Authenticator {
     private _authResting = false;
     private _authRestPeriod = 3000;
 
-    private _rpcServerMQ = MQRpcServer.shared;
-    private _producerMQ = MQProducer.shared;
-    private _consumerMQ = MQConsumer.shared;
-
     private constructor() {
-        this.addSocketEventListeners();
-        this.addMQEventListeners();
+      super();
 
-        this._socketClient.connect();
+        this.addSocketEventListeners();
     }
 
     public static get shared(): Authenticator {
@@ -53,10 +44,6 @@ export class Authenticator {
         return this._authenticated;
     }
 
-    isMQSetupCompleted(): boolean {
-        return this._consumerMQ.connected && this._producerMQ.connected && this._rpcServerMQ.connected;
-    }
-
     /*******************************************************************************************************************
      * Authentication functions
      ******************************************************************************************************************/
@@ -71,15 +58,51 @@ export class Authenticator {
         this._username = username;
         this._password = password;
         this._worldId = worldId;
+
+      this.on(AuthenticatorEvent.loginFailed, () => {
+
+      });
+
+      this.on(AuthenticatorEvent.loggedIn, (error) => {
+
+      });
+
+      this._socketClient.connect();
     }
+
+  logout(done: (error: boolean) => void) {
+    if (this.isAuthenticated()) {
+      this._socketClient.request({
+        type: 'Authentication/logout',
+        data: {
+          name: this._username,
+          pass: this._password
+        }
+      }, replyMsg => {
+        if (replyMsg.type.toLowerCase() != 'logout/success') {
+          Log.service().error('Logout loginFailed');
+          this.emit(AuthenticatorEvent.logoutFailed);
+          done(true);
+        } else {
+          Log.service().info('Logout successful');
+          this._loginInProgress = false;
+          this._authenticated = false;
+          this.emit(AuthenticatorEvent.loggedOut);
+          done(false);
+        }
+      });
+    }
+  }
 
     private _selectWorld() {
         if (!this._loggedIn) {
           Log.service().error('Player is not logged in to select world.');
+          this.emit(AuthenticatorEvent.loginFailed);
             return;
         }
         if (this._worldId == '') {
           Log.service().error('World ID is not supplied.');
+          this.emit(AuthenticatorEvent.loginFailed);
             return;
         }
 
@@ -92,7 +115,8 @@ export class Authenticator {
             }
         }, replyMsg => {
             if (replyMsg.type.toLowerCase() != 'authentication/characterselected') {
-              Log.service().error('World selection failed');
+              Log.service().error('World selection loginFailed');
+              this.emit(AuthenticatorEvent.loginFailed);
             } else {
               Log.service().info('World selection successful');
                 this._loginInProgress = false;
@@ -100,7 +124,6 @@ export class Authenticator {
 
                 // complete login sequence
                 this._completeLoginSequence();
-                this.connectMQ();
             }
         });
     }
@@ -110,6 +133,7 @@ export class Authenticator {
             type: 'Authentication/completeLogin',
             data: {}
         });
+      this.emit(AuthenticatorEvent.loggedIn);
     }
 
     /**
@@ -118,6 +142,7 @@ export class Authenticator {
     private _login() {
         if (this._username == '' || this._password == '') {
           Log.service().error('Username/password is not supplied.');
+          this.emit(AuthenticatorEvent.loginFailed, {error: 'username/password is not supplied'});
             return;
         }
 
@@ -138,23 +163,8 @@ export class Authenticator {
 
         if (this.isAuthenticated()) {
             // logout first
-            this._socketClient.request({
-                type: 'Authentication/logout',
-                data: {
-                    name: this._username,
-                    pass: this._password
-                }
-            }, replyMsg => {
-                if (replyMsg.type.toLowerCase() != 'logout/success') {
-                  Log.service().error('Logout failed');
-                } else {
-                  Log.service().info('Logout successful');
-                    this._loginInProgress = false;
-                    this._authenticated = false;
-
-                    this.disconnectMQ();
-                }
-            });
+          this.logout(() => {
+          });
         } else {
             // login first
             this._loginInProgress = true;
@@ -166,7 +176,10 @@ export class Authenticator {
                 }
             }, replyMsg => {
                 if (replyMsg.type.toLowerCase() != 'login/success') {
-                  Log.service().error('Login failed');
+                  Log.service().error('Login loginFailed');
+
+                  // match up with authentication errors
+                  this.emit(AuthenticatorEvent.loginFailed);
                 } else {
                   Log.service().info('Login successful');
                     this._loggedIn = true;
@@ -187,21 +200,6 @@ export class Authenticator {
     }
 
     /**
-     * addMQEventListeners() add event listeners for outgoing and incoming messages to the
-     * socket service.
-     */
-    private addMQEventListeners() {
-        this._rpcServerMQ.on(MQEvent.rpcMessageReceived, (mqMsg, socketMsg) => {
-            this.onRpcMessageReceived(mqMsg, socketMsg);
-        });
-
-        this._consumerMQ.on(MQEvent.fireForgetMessageReceived, (socketMsg) => {
-            this.onFireForgetMessageReceived(socketMsg);
-        });
-    }
-
-
-    /**
      * addSocketEventListeners() add event listeners for outgoing and incoming messages to and
      * from the game socket.io server
      */
@@ -220,65 +218,6 @@ export class Authenticator {
     }
 
     /*******************************************************************************************************************
-     * Message queue initialisation and event handlers
-     ******************************************************************************************************************/
-
-    configureMQ(mqUrl: string) {
-        this._rpcServerMQ.setConnectionProperties(mqUrl, 'game.rpc', 'auth');
-        this._producerMQ.setConnectionProperties(mqUrl, 'from.game.exchange', 'auth');
-        this._consumerMQ.setConnectionProperties(mqUrl, 'to.game.exchange', 'auth');
-    }
-
-    /**
-     * connectMQ() establishes MQ connections
-     */
-    connectMQ() {
-        this._rpcServerMQ.connect();
-        this._producerMQ.connect();
-        this._consumerMQ.connect();
-    }
-
-    disconnectMQ() {
-        this._rpcServerMQ.disconnect();
-        this._producerMQ.disconnect();
-        this._consumerMQ.disconnect();
-    }
-
-    private _processOnceAuthenticated(socketMessage: ISocketMessage, rpcReceivedMessage: amqp.ConsumeMessage | null) {
-        // place message into internal queue to be processed
-        // TODO: Needs to identify when this edge case occurs
-        this._login();
-    }
-
-    private onRpcMessageReceived(mqMessage: amqp.ConsumeMessage, socketMessage: ISocketMessage) {
-        if (this._socketClient.isConnected()) {
-            Log.socket.debug(JSON.stringify(socketMessage));
-
-            if (this.isAuthenticated()) {
-                this._socketClient.request(socketMessage, replyMsg => {
-                    this._rpcServerMQ.reply(mqMessage, replyMsg);
-                });
-            } else {
-                this._processOnceAuthenticated(socketMessage, mqMessage);
-            }
-        } else {
-          Log.service().debug('socket client is not connected, RPC message ignored');
-        }
-    }
-
-    private onFireForgetMessageReceived(socketMessage: ISocketMessage) {
-        if (this._socketClient.isConnected()) {
-            Log.socket.silly(JSON.stringify(socketMessage));
-
-            if (this.isAuthenticated()) {
-                this._socketClient.fire(socketMessage);
-            } else {
-                this._processOnceAuthenticated(socketMessage, null);
-            }
-        }
-    }
-
-    /*******************************************************************************************************************
      * Socket.io-client event handlers
      ******************************************************************************************************************/
 
@@ -293,9 +232,9 @@ export class Authenticator {
         if (message.type.toLowerCase() == 'system/welcome') {
             this._login();
             return;
+        } else {
+          this.emit(AuthenticatorEvent.unattachedMessageReceived, message);
         }
-
-        this._producerMQ.send(message);
     }
 
     private onSocketDisconnection() {

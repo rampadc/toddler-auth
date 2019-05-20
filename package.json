@@ -4,7 +4,8 @@
   "description": "Tribal Wars 2 authentication service includes authentication service, socket client and RabbitMQ connections",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc --build && node dist/main.js"
   },
   "repository": {
     "type": "git",
@@ -14,16 +15,15 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/cn-d/auth-service#readme",
   "devDependencies": {
-    "@types/amqplib": "^0.5.9",
     "@types/node": "^10.12.18",
     "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^3.4.4",
     "typescript": "^3.2.2"
   },
   "dependencies": {
-    "amqplib": "^0.5.3",
-    "uuid": "^3.3.2",
     "socket.io-client": "^2.2.0",
+    "ts-nats": "^1.2.4",
+    "uuid": "^3.3.2",
     "winston": "^3.1.0"
   }
 }
