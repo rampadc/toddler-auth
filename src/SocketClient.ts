@@ -56,7 +56,6 @@ export class SocketClient extends EventEmitter {
         });
 
         this.socket.on("msg", (messageObject: ISocketMessage) => {
-            Log.socket.debug(JSON.stringify(messageObject));
             this.reply(messageObject);
         });
 
@@ -116,8 +115,6 @@ export class SocketClient extends EventEmitter {
                 return;
             }
         }
-
-        Log.service().info('Message to be sent to authenticator');
 
         // reached the end but cannot find a match for RPC
         this.emit(SocketClientEvent.messageReceived, message);

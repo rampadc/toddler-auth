@@ -99,6 +99,24 @@ export class Authenticator extends EventEmitter {
     }
   }
 
+  fire(message: ISocketMessage) {
+    if (this.isAuthenticated()) {
+      this._socketClient.fire(message);
+    }
+  }
+
+  request(message: ISocketMessage): Promise<ISocketMessage> {
+    return new Promise<ISocketMessage>((resolve, reject) => {
+      if (!this.isAuthenticated()) {
+        reject(null);
+      } else {
+        this._socketClient.request(message, replyMsg => {
+          resolve(replyMsg);
+        })
+      }
+    });
+  }
+
   private _selectWorld() {
     if (!this._loggedIn) {
       Log.service().error('Player is not logged in to select world.');
