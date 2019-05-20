@@ -19,14 +19,14 @@ export class Log {
   public static service(): winston.Logger {
     return (
       this._service ||
-      (this._service = Log.createLogger())
+      (this._service = Log.createLogger('service'))
     );
   }
 
   public static get socket(): winston.Logger {
     return (
       this._socket ||
-      (this._socket = Log.createLogger())
+      (this._socket = Log.createLogger('socket'))
     );
   }
 
@@ -34,11 +34,18 @@ export class Log {
     return `${info.level.toUpperCase()} ${info.message}`;
   });
 
-  static createLogger(): Logger {
+  static createLogger(component: string): Logger {
+    const componentNameFormat = winston.format(info => {
+      info.component = component;
+      return info;
+    });
+
     return createLogger({
       level: "silly",
       format: combine(
-        prettyPrint()
+        componentNameFormat(),
+        prettyPrint(),
+        // format.json()
       ),
       transports: [
         new transports.Console()
