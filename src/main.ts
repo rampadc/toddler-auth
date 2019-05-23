@@ -3,8 +3,7 @@ import {Secrets} from "./Secrets";
 import {Log} from "./Log";
 
 import {Client, connect, Payload, Subscription} from 'ts-nats';
-import {GameEvents, GameTypes} from "./Providers";
-import {createInbox} from "ts-nats/lib/util";
+import {GameTypes} from "./Providers";
 import {AuthenticatorEvent} from "./AuthenticatorEvent";
 import {ISocketMessage} from "./ISocketMessage";
 
