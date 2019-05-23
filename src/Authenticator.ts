@@ -256,7 +256,6 @@ export class Authenticator extends EventEmitter {
     if (message.type.toLowerCase() == 'system/welcome') {
       this._login();
     } else {
-      console.log('Unattached');
       this.emit(AuthenticatorEvent.unattachedMessageReceived, message);
     }
   }
