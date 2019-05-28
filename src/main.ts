@@ -6,13 +6,14 @@ import {Client, connect, Payload, Subscription} from 'ts-nats';
 import {GameTypes} from "./Providers";
 import {AuthenticatorEvent} from "./AuthenticatorEvent";
 import {ISocketMessage} from "./ISocketMessage";
+import {rejects} from "assert";
 
 /*******************************************************************************************************************
  * Check for credentials from Docker Swarm secrets
  ******************************************************************************************************************/
 const username = Secrets.get('TODDLER_USERNAME') || process.env.TODDLER_USERNAME as string || 'Simp1eUs3rname';
 const password = Secrets.get('TODDLER_PASSWORD') || process.env.TODDLER_PASSWORD as string || 'Passw0rd';
-const worldId = Secrets.get('TODDLER_WORLD_ID') || process.env.TODDLER_WORLD_ID as string || 'en41';
+const worldId = Secrets.get('TODDLER_WORLD_ID') || process.env.TODDLER_WORLD_ID as string || 'en45';
 let nc: Client;
 
 if (username.trim().length == 0 || password.trim().length == 0 || worldId.trim().length == 0) {
@@ -126,6 +127,7 @@ Promise.all([
     GameTypes.PREMIUM_DAILY_UNIT_DEAL_ACCEPT,
     GameTypes.PREMIUM_DAILY_UNIT_DEAL_GET_OFFERS
   ])
+    .then(setupSubscriptionToGame)
     .then(enableNotifications)
     .then(broadcastReady)
     .then(() => {
@@ -153,16 +155,19 @@ function gracefullyExit() {
 
 function setupSubscriptionsToProcessRequests(nc: Client, requestTypes: string[]): Promise<Subscription[]> {
   return Promise.all(requestTypes.map(type => {
-    return nc.subscribe(type.toLowerCase().replace('/', '.'), (error, msg) => {
+    const subject = type.toLowerCase().replace('/', '.');
+    return nc.subscribe(subject, (error, msg) => {
       if (error) {
         Log.service().error(error);
-      }
-      if (msg.reply) {
+      } else if (msg.reply) {
         authenticator.request(msg.data).then(socketMsg => {
           nc.publish(msg.reply as string, socketMsg.data);
         }).catch(error => {
           Log.service().error(error);
         });
+      } else {
+        Log.service().debug('Unhandled subscription return message');
+        Log.service().debug(msg);
       }
     })
   }));
@@ -181,4 +186,14 @@ function enableNotifications() {
 
 function broadcastReady() {
   nc.publish('authenticator.ready');
+}
+
+function setupSubscriptionToGame() {
+  return nc.subscribe('authenticator.to.game', (err, msg) => {
+    if (err) {
+      Log.service().error(err);
+    } else {
+      authenticator.fire(msg.data);
+    }
+  });
 }

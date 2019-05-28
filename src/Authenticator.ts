@@ -3,7 +3,6 @@ import {ISocketMessage} from "./ISocketMessage";
 import {Log} from "./Log";
 import EventEmitter from 'events';
 import {AuthenticatorEvent} from "./AuthenticatorEvent";
-import {GameEvents} from "./Providers";
 
 /**
  * Authenticator class authenticates user to game if not connected

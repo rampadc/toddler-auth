@@ -109,13 +109,15 @@ export class SocketClient extends EventEmitter {
 
         for (let i = this._replyQueue.length - 1; i >= 0; i--) {
             if (this._replyQueue[i].message.id == message.id) {
-                this._replyQueue[i].replyFn(message);
+                Log.socket.debug(JSON.stringify(message));
 
+                this._replyQueue[i].replyFn(message);
                 this._replyQueue.splice(i, 1);
                 return;
             }
         }
 
+        Log.socket.debug(JSON.stringify(message));
         // reached the end but cannot find a match for RPC
         this.emit(SocketClientEvent.messageReceived, message);
     }
