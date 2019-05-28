@@ -132,7 +132,7 @@ Promise.all([
       Log.service().info('Ready for messages');
     })
     .catch(error => {
-
+      Log.service().error(error);
     });
 }).catch((error) => {
   console.log(error);
