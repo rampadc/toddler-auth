@@ -6,7 +6,6 @@ import {Client, connect, Payload, Subscription} from 'ts-nats';
 import {GameTypes} from "./Providers";
 import {AuthenticatorEvent} from "./AuthenticatorEvent";
 import {ISocketMessage} from "./ISocketMessage";
-import {rejects} from "assert";
 
 /*******************************************************************************************************************
  * Check for credentials from Docker Swarm secrets
@@ -41,6 +40,7 @@ Promise.all([
   // set up subscriptions to process requests
   setupSubscriptionsToProcessRequests(nc, [
     GameTypes.CHAR_GET_INFO,
+    GameTypes.CHAR_GET_PROFILE,
     GameTypes.MAP_SET_TUTORIAL_VILLAGE_LOCATION,
     GameTypes.MAP_GET_NEAREST_BARBARIAN_VILLAGE,
     GameTypes.MAP_GETPROVINCE,
