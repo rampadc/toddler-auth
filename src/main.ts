@@ -135,7 +135,7 @@ Promise.all([
       Log.service().error(error);
     });
 }).catch((error) => {
-  console.log(error);
+  Log.service().error(error);
   process.exit(1);
 });
 
@@ -161,7 +161,7 @@ function setupSubscriptionsToProcessRequests(nc: Client, requestTypes: string[])
         authenticator.request(msg.data).then(socketMsg => {
           nc.publish(msg.reply as string, socketMsg.data);
         }).catch(error => {
-          console.log(error);
+          Log.service().error(error);
         });
       }
     })
