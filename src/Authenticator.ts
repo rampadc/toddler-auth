@@ -238,6 +238,7 @@ export class Authenticator extends EventEmitter {
     this._socketClient.on(SocketClientEvent.connected, () => {
       this.onSocketConnection();
     });
+
   }
 
   /*******************************************************************************************************************
@@ -261,6 +262,7 @@ export class Authenticator extends EventEmitter {
 
   private onSocketDisconnection() {
     this._socketPreviouslyDisconnected = true;
+    Log.socket.debug('Socket disconnected');
 
     // reconnect
     setTimeout(() => {

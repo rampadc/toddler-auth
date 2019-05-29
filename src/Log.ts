@@ -1,5 +1,4 @@
 import winston, {Logger} from "winston";
-import {Console} from "inspector";
 
 const {createLogger, format, transports} = winston;
 const {combine, prettyPrint, printf} = format;
@@ -44,8 +43,9 @@ export class Log {
       level: "silly",
       format: combine(
         componentNameFormat(),
-        prettyPrint(),
-        // format.json()
+        format.timestamp(),
+        // prettyPrint(),
+        format.json()
       ),
       transports: [
         new transports.Console()

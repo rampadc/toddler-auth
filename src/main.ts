@@ -10,12 +10,13 @@ import {ISocketMessage} from "./ISocketMessage";
 /*******************************************************************************************************************
  * Check for credentials from Docker Swarm secrets
  ******************************************************************************************************************/
-const username = Secrets.get('TODDLER_USERNAME') || process.env.TODDLER_USERNAME as string || 'Simp1eUs3rname';
-const password = Secrets.get('TODDLER_PASSWORD') || process.env.TODDLER_PASSWORD as string || 'Passw0rd';
-const worldId = Secrets.get('TODDLER_WORLD_ID') || process.env.TODDLER_WORLD_ID as string || 'en45';
+const username = Secrets.get('TODDLER_USERNAME') || process.env.TODDLER_USERNAME as string || '';
+const password = Secrets.get('TODDLER_PASSWORD') || process.env.TODDLER_PASSWORD as string || '';
+const worldId = Secrets.get('TODDLER_WORLD_ID') || process.env.TODDLER_WORLD_ID as string || '';
+const natsUri = process.env.TODDLER_NATS_URI || '';
 let nc: Client;
 
-if (username.trim().length == 0 || password.trim().length == 0 || worldId.trim().length == 0) {
+if (username.trim().length == 0 || password.trim().length == 0 || worldId.trim().length == 0 || natsUri.trim().length == 0) {
   Log.service().error('Username, password or world id are not provided.');
     process.exit(1);
 }
@@ -33,7 +34,10 @@ Log.service().info('Initializing authentication service...');
 
 Promise.all([
   authenticator.login(username, password, worldId),
-  connect({payload: Payload.JSON}) // connects to nats://localhost:4222 by default
+  connect({
+    servers: [natsUri],
+    payload: Payload.JSON, reconnect: true
+  }) // connects to nats://localhost:4222 by default
 ]).then((values) => {
   nc = values[1];
 
@@ -41,6 +45,8 @@ Promise.all([
   setupSubscriptionsToProcessRequests(nc, [
     GameTypes.CHAR_GET_INFO,
     GameTypes.CHAR_GET_PROFILE,
+    GameTypes.TRIBE_GET_PROFILE,
+    GameTypes.ACHIEVEMENT_GET_CHAR_ACHIEVEMENTS,
     GameTypes.MAP_SET_TUTORIAL_VILLAGE_LOCATION,
     GameTypes.MAP_GET_NEAREST_BARBARIAN_VILLAGE,
     GameTypes.MAP_GETPROVINCE,
