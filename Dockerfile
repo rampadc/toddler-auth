@@ -1,13 +1,10 @@
 FROM node:alpine AS base
 
-RUN apk add -U tzdata
-RUN mkdir -p /var/log/services
-
 #
 # Build dependencies
 FROM base AS build-dependencies
 
-RUN mkdir -p /opt/svc/auth
+RUN mkdir -p /opt/svc/build
 
 # install dependencies to git submodule
 RUN npm install -g typescript
@@ -15,7 +12,7 @@ RUN npm install -g typescript
 #
 # Build
 FROM build-dependencies AS build
-WORKDIR /opt/svc/auth
+WORKDIR /opt/svc/build
 
 COPY . .
 
@@ -33,6 +30,6 @@ COPY package.json package-*.json /opt/
 RUN npm install --production
 
 # copy in distribution code
-COPY --from=build /opt/svc/auth/dist/ /opt/
+COPY --from=build /opt/svc/build/dist/ /opt/
 
 CMD ["node", "main.js"]
