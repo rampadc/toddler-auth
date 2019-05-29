@@ -9,6 +9,6 @@ before_deploy:
 
 deploy:
   provider: script
-  script: docker push rampadc/toddler-world-data:latest
+  script: docker push rampadc/toddler-auth:latest
   on:
     branch: master
