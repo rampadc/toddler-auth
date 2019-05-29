@@ -1,0 +1,14 @@
+services:
+  - docker
+
+script:
+  - docker build . -t rampadc/toddler-auth:latest
+
+before_deploy:
+  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+
+deploy:
+  provider: script
+  script: docker push rampadc/toddler-world-data:latest
+  on:
+    branch: master
