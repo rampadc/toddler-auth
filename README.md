@@ -22,6 +22,20 @@ If you are using IBM Cloud CLI, IBM Cloud CLI bundles CF CLI. Hence CF CLI does 
 ibmcloud cf install-plugin cflocal
 ```
 
+### Building
+
+First, install dependencies with
+
+```
+npm install
+```
+
+Then, build with
+
+```
+node_modules/typescript/bin/tsc --build
+```
+
 ### Installing
 
 First, stage the application with 
