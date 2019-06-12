@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc --build && node dist/main.js"
+    "start": "node dist/main.js",
+    "prepush": "node_modules/typescript/bin/tsc --build",
+    "push": "ibmcloud cf push"
   },
   "repository": {
     "type": "git",
@@ -13,14 +15,17 @@
   },
   "author": "Cong Nguyen",
   "license": "Apache-2.0",
-  "homepage": "https://bitbucket.org/cn-d/auth-service#readme",
+  "homepage": "https://lettus.xyz",
   "devDependencies": {
+    "@types/express": "^4.17.0",
     "@types/node": "^10.12.18",
     "@types/socket.io-client": "^1.4.32",
     "@types/uuid": "^3.4.4",
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@cloudnative/health-connect": "^2.0.0",
+    "express": "^4.17.1",
     "socket.io-client": "^2.2.0",
     "ts-nats": "^1.2.4",
     "uuid": "^3.3.2",
