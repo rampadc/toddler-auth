@@ -33,6 +33,12 @@ npm install
 Then, build with
 
 ```
+npm run-script build
+```
+
+Or, alternatively,
+
+```
 node_modules/typescript/bin/tsc --build
 ```
 
