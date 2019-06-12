@@ -15,6 +15,6 @@ applications:
   memory: 128M
   disk_quota: 128M
   env:
-    TODDLER_USERNAME: <username>
-    TODDLER_PASSWORD: <password>
-    TODDLER_WORLD_ID: <worldId>
+    TODDLER_USERNAME: Simp1eUs3rname
+    TODDLER_PASSWORD: Passw0rd
+    TODDLER_WORLD_ID: en45
