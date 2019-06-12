@@ -8,8 +8,6 @@ applications:
   routes:
     - route: toddler-nats.apps.internal
 - name: toddler-auth
-  buildpacks: 
-    - sdk-for-nodejs
   routes:
     - route: toddler-auth.apps.internal
   memory: 128M
