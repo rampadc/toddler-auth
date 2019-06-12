@@ -82,3 +82,7 @@ typings/
 
 dist
 /.project
+
+# CF Local
+*.cache
+*.droplet

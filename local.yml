@@ -1,0 +1,20 @@
+---
+applications:
+- name: toddler-nats
+  memory: 128M
+  disk_quota: 256M
+  docker:
+    image: bitnami/nats:latest
+  routes:
+    - route: toddler-nats.apps.internal
+- name: toddler-auth
+  buildpacks: 
+    - sdk-for-nodejs
+  routes:
+    - route: toddler-auth.apps.internal
+  memory: 128M
+  disk_quota: 128M
+  env:
+    TODDLER_USERNAME: <username>
+    TODDLER_PASSWORD: <password>
+    TODDLER_WORLD_ID: <worldId>
