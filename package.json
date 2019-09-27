@@ -4,7 +4,7 @@
   "description": "Tribal Wars 2 authentication service includes authentication service, socket client and a message-queue connections",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No test specified\"",
     "start": "node dist/main.js",
     "build": "node_modules/typescript/bin/tsc --build",
     "prepush": "node_modules/typescript/bin/tsc --build",
