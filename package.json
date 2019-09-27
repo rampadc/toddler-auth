@@ -1,5 +1,5 @@
 {
-  "name": "auth-service",
+  "name": "toddler-auth",
   "version": "1.0.0",
   "description": "Tribal Wars 2 authentication service includes authentication service, socket client and a message-queue connections",
   "main": "index.js",
